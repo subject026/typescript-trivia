@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
+
+import Container from "./components/ui/Container";
+import Heading from "./components/ui/Heading";
 
 import QuestionCard from "./components/QuestionCard";
-import { fetchQuizQuestions } from "./components/TriviaAPI";
+import { fetchCategories, fetchQuizQuestions } from "./components/TriviaAPI";
 
 export type AppState = {
   questions: Question[];
   number: number;
+  quizIsComplete: boolean;
 };
 
 export type Question = {
   question: string;
   correctAnswer: string;
   answers: string[];
+  isCorrect?: boolean;
 };
 
 export enum Difficulty {
@@ -21,26 +25,50 @@ export enum Difficulty {
   HARD = "hard",
 }
 
+export enum Category {
+  MYTHOLOGY = 20,
+}
+
 const TOTAL_QUESTIONS = 10;
 
 const initialState: AppState = {
   questions: [],
   number: 0,
+  quizIsComplete: false,
 };
 
 const App: React.FC = () => {
   const [state, setState] = useState(initialState);
-  const startTrivia = () => {};
+  // const startTrivia = () => {};
 
-  const checkAnswer = (event: React.MouseEvent<HTMLButtonElement>) => {};
+  // const checkAnswer = (event: React.MouseEvent<HTMLButtonElement>) => {};
 
-  const nextQuestion = () => {};
+  // const nextQuestion = () => {};
+
+  const handleUserAnswer = (isCorrect: boolean) => {
+    console.log(
+      `question ${state.number} is ${isCorrect ? "correct" : "incorrect"}`
+    );
+    setState((state) => {
+      const newState = { ...state };
+      newState.questions[state.number].isCorrect = isCorrect;
+      console.log(state.number, "\n", state.questions.length);
+      if (state.number + 1 === state.questions.length) {
+        newState.quizIsComplete = true;
+      } else {
+        newState.number = state.number + 1;
+      }
+
+      return newState;
+    });
+  };
 
   useEffect(() => {
-    console.log(state);
     (async () => {
+      await fetchCategories();
       const questions = await fetchQuizQuestions(
         TOTAL_QUESTIONS,
+        Category.MYTHOLOGY,
         Difficulty.EASY
       );
       console.log(questions);
@@ -51,30 +79,30 @@ const App: React.FC = () => {
         };
       });
     })();
-  }, [fetchQuizQuestions]);
+  }, []);
 
-  const { questions, number } = state;
+  const { questions, number, quizIsComplete } = state;
+  console.log("number: ", number);
   return (
-    <div className="h-screen bg-gray-200 h-full p-24 flex flex-col justify-center items-center">
-      <h1 className="text-8xl font-bold text-blue-900">React QUIZ</h1>
-      <img src={logo} className="w-32" alt="logo" />
-      <p>
-        Edit <code>src/App.tsx</code> and save to reload.
-      </p>
-      {questions.length && (
+    <Container>
+      <Heading>React QUIZ</Heading>
+
+      {/* display categories for selection */}
+
+      {/* get questions based on category selected and  */}
+
+      {questions.length && !quizIsComplete && (
         <QuestionCard
           question={questions[number]}
-          // answers={[]}
-          // callback={() => {}}
+          callback={handleUserAnswer}
           // userAnswer
           questionNr={number}
           totalQuestions={questions.length}
         />
       )}
-      <a href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-        Learn React
-      </a>
-    </div>
+
+      {quizIsComplete && <h2>Boom</h2>}
+    </Container>
   );
 };
 
