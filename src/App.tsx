@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 
 import Container from "./components/ui/Container";
 import Heading from "./components/ui/Heading";
-
+import Spinner from "./components/ui/Spinner";
+import Categories from "./components/Categories";
 import QuestionCard from "./components/QuestionCard";
 import { fetchCategories, fetchQuizQuestions } from "./components/TriviaAPI";
+import Main from "./components/ui/Main";
 
-export type AppState = {
-  questions: Question[];
-  number: number;
-  quizIsComplete: boolean;
+export type Category = {
+  id: number;
+  name: string;
 };
 
 export type Question = {
@@ -25,13 +26,17 @@ export enum Difficulty {
   HARD = "hard",
 }
 
-export enum Category {
-  MYTHOLOGY = 20,
-}
-
 const TOTAL_QUESTIONS = 10;
 
+export type AppState = {
+  categories: Category[];
+  questions: Question[];
+  number: number;
+  quizIsComplete: boolean;
+};
+
 const initialState: AppState = {
+  categories: [],
   questions: [],
   number: 0,
   quizIsComplete: false,
@@ -65,43 +70,50 @@ const App: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      await fetchCategories();
-      const questions = await fetchQuizQuestions(
-        TOTAL_QUESTIONS,
-        Category.MYTHOLOGY,
-        Difficulty.EASY
-      );
-      console.log(questions);
-      setState((state: AppState) => {
-        return {
-          ...state,
-          questions: [...questions],
-        };
-      });
+      const categories = await fetchCategories();
+      setState((state: AppState) => ({
+        ...state,
+        categories: [...categories],
+      }));
+      // const questions = await fetchQuizQuestions(
+      //   TOTAL_QUESTIONS,
+      //   Category.MYTHOLOGY,
+      //   Difficulty.EASY
+      // );
+      // console.log(questions);
+      // setState((state: AppState) => {
+      //   return {
+      //     ...state,
+      //     questions: [...questions],
+      //   };
+      // });
     })();
   }, []);
 
-  const { questions, number, quizIsComplete } = state;
-  console.log("number: ", number);
+  const { categories, questions, number, quizIsComplete } = state;
+
   return (
     <Container>
-      <Heading>React QUIZ</Heading>
+      <Heading>Quiz App</Heading>
+      <Main>
+        {categories.length < 1 && <Spinner />}
+        {categories.length > 0 && <Categories categories={categories} />}
+        {/* !!! choose difficulty */}
 
-      {/* display categories for selection */}
+        {/* !!! get questions based on category selected and start quiz */}
 
-      {/* get questions based on category selected and  */}
+        {questions.length > 0 && !quizIsComplete && (
+          <QuestionCard
+            question={questions[number]}
+            callback={handleUserAnswer}
+            questionNr={number}
+            totalQuestions={questions.length}
+          />
+        )}
 
-      {questions.length && !quizIsComplete && (
-        <QuestionCard
-          question={questions[number]}
-          callback={handleUserAnswer}
-          // userAnswer
-          questionNr={number}
-          totalQuestions={questions.length}
-        />
-      )}
-
-      {quizIsComplete && <h2>Boom</h2>}
+        {/* render results */}
+        {quizIsComplete && <h2>Boom</h2>}
+      </Main>
     </Container>
   );
 };
