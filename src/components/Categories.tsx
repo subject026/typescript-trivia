@@ -1,5 +1,7 @@
 import React from "react";
 
+import CategoryButton from "./ui/CategoryButton";
+
 import { Category } from "../App";
 
 type Props = {
@@ -10,12 +12,11 @@ type Props = {
 const Categories: React.FC<Props> = ({ categories, onCategorySelect }) => (
   <>
     {categories.map((category) => (
-      <button
+      <CategoryButton
         key={`key_${category.name}`}
-        onClick={() => onCategorySelect(category)}
-      >
-        {category.name}
-      </button>
+        category={category}
+        onCategorySelect={onCategorySelect}
+      />
     ))}
   </>
 );
