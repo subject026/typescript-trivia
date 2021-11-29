@@ -1,11 +1,12 @@
 import { decode } from "html-entities";
 
-import { Difficulty } from "../App";
+import { Difficulty, Category } from "../App";
 
-export const fetchCategories = async () => {
+export const fetchCategories = async (): Promise<Category[]> => {
   const res = await fetch("https://opentdb.com/api_category.php");
   const data = await res.json();
   console.log({ data });
+  return [...data.trivia_categories];
 };
 
 const jumble = (arr: string[]): string[] => {
