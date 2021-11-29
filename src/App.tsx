@@ -58,11 +58,6 @@ const App: React.FC = () => {
 
   const { categories, selectedCategory, questions, number, quizIsComplete } =
     state;
-  // const startTrivia = () => {};
-
-  // const checkAnswer = (event: React.MouseEvent<HTMLButtonElement>) => {};
-
-  // const nextQuestion = () => {};
 
   const handleUserAnswer = (isCorrect: boolean) => {
     console.log(
@@ -126,8 +121,6 @@ const App: React.FC = () => {
           />
         )}
         {/* !!! choose difficulty */}
-
-        {/* !!! get questions based on category selected and start quiz */}
 
         {questions.length > 0 && !quizIsComplete && (
           <QuestionCard
