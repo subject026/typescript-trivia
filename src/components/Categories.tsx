@@ -4,12 +4,18 @@ import { Category } from "../App";
 
 type Props = {
   categories: Category[];
+  onCategorySelect: (category: Category) => void;
 };
 
-const Categories: React.FC<Props> = ({ categories }) => (
+const Categories: React.FC<Props> = ({ categories, onCategorySelect }) => (
   <>
     {categories.map((category) => (
-      <h2>{category.name}</h2>
+      <button
+        key={`key_${category.name}`}
+        onClick={() => onCategorySelect(category)}
+      >
+        {category.name}
+      </button>
     ))}
   </>
 );

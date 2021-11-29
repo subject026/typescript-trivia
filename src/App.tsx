@@ -31,12 +31,14 @@ const TOTAL_QUESTIONS = 10;
 export type AppState = {
   categories: Category[];
   questions: Question[];
+  selectedCategory: null | Category;
   number: number;
   quizIsComplete: boolean;
 };
 
 const initialState: AppState = {
   categories: [],
+  selectedCategory: null,
   questions: [],
   number: 0,
   quizIsComplete: false,
@@ -44,6 +46,18 @@ const initialState: AppState = {
 
 const App: React.FC = () => {
   const [state, setState] = useState(initialState);
+
+  const oncategorySelect = (category: Category): void => {
+    setState((state) => {
+      return {
+        ...state,
+        selectedCategory: category,
+      };
+    });
+  };
+
+  const { categories, selectedCategory, questions, number, quizIsComplete } =
+    state;
   // const startTrivia = () => {};
 
   // const checkAnswer = (event: React.MouseEvent<HTMLButtonElement>) => {};
@@ -75,29 +89,42 @@ const App: React.FC = () => {
         ...state,
         categories: [...categories],
       }));
-      // const questions = await fetchQuizQuestions(
-      //   TOTAL_QUESTIONS,
-      //   Category.MYTHOLOGY,
-      //   Difficulty.EASY
-      // );
-      // console.log(questions);
-      // setState((state: AppState) => {
-      //   return {
-      //     ...state,
-      //     questions: [...questions],
-      //   };
-      // });
     })();
   }, []);
 
-  const { categories, questions, number, quizIsComplete } = state;
+  useEffect(() => {
+    const loadQuestions = async () => {
+      if (selectedCategory !== null) {
+        const questions = await fetchQuizQuestions(
+          TOTAL_QUESTIONS,
+          selectedCategory.id,
+          Difficulty.EASY
+        );
+        console.log(questions);
+        setState((state: AppState) => {
+          return {
+            ...state,
+            questions: [...questions],
+          };
+        });
+      } else {
+        console.error("No category selected!");
+      }
+    };
+    loadQuestions();
+  }, [selectedCategory]);
 
   return (
     <Container>
       <Heading>Quiz App</Heading>
       <Main>
         {categories.length < 1 && <Spinner />}
-        {categories.length > 0 && <Categories categories={categories} />}
+        {!selectedCategory && categories.length > 0 && (
+          <Categories
+            categories={categories}
+            onCategorySelect={oncategorySelect}
+          />
+        )}
         {/* !!! choose difficulty */}
 
         {/* !!! get questions based on category selected and start quiz */}
