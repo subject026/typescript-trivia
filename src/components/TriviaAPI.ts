@@ -28,9 +28,13 @@ export const fetchQuizQuestions = async (
   const questions = result.results.map((item: any) => {
     const { question, incorrect_answers, correct_answer } = item;
 
+    console.log({ incorrect_answers, correct_answer });
+
     return {
       question: decode(question),
-      answers: jumble([correct_answer, ...incorrect_answers]),
+      answers: jumble(
+        [correct_answer, ...incorrect_answers].map((q) => decode(q))
+      ),
       correctAnswer: correct_answer,
     };
   });
