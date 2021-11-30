@@ -9,7 +9,7 @@ type Props = {
   onCategorySelect: (category: Category) => void;
 };
 
-const Categories: React.FC<Props> = ({ categories, onCategorySelect }) => (
+const CategorySelect: React.FC<Props> = ({ categories, onCategorySelect }) => (
   <>
     {categories.map((category) => (
       <CategoryButton
@@ -21,4 +21,4 @@ const Categories: React.FC<Props> = ({ categories, onCategorySelect }) => (
   </>
 );
 
-export default Categories;
+export default CategorySelect;

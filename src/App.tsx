@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Container from "./components/ui/Container";
 import Heading from "./components/ui/Heading";
 import Spinner from "./components/ui/Spinner";
-import Categories from "./components/Categories";
+import CategorySelect from "./components/CategorySelect";
 import QuestionCard from "./components/QuestionCard";
 import { fetchCategories, fetchQuizQuestions } from "./components/TriviaAPI";
 import Main from "./components/ui/Main";
@@ -115,7 +115,7 @@ const App: React.FC = () => {
       <Main>
         {categories.length < 1 && <Spinner />}
         {!selectedCategory && categories.length > 0 && (
-          <Categories
+          <CategorySelect
             categories={categories}
             onCategorySelect={oncategorySelect}
           />
@@ -131,7 +131,7 @@ const App: React.FC = () => {
           />
         )}
 
-        {/* render results */}
+        {/* !!! render results */}
         {quizIsComplete && <h2>Boom</h2>}
       </Main>
     </Container>
