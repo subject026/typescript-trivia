@@ -12,8 +12,14 @@ export const fetchCategories = async (): Promise<Category[]> => {
 };
 
 const jumble = (arr: string[]): string[] => {
-  // const sliced;
-  return arr;
+  return arr.reduce((acc: string[], item) => {
+    if (Math.floor(Math.random() * 100) > 50) {
+      acc.push(item);
+    } else {
+      acc.unshift(item);
+    }
+    return acc;
+  }, []);
 };
 
 export const fetchQuizQuestions = async (
