@@ -4,9 +4,12 @@ import Container from "./components/ui/Container";
 import Heading from "./components/ui/Heading";
 import Spinner from "./components/ui/Spinner";
 import CategorySelect from "./components/CategorySelect";
+import DifficultySelect from "./components/DifficultySelect";
 import QuestionCard from "./components/QuestionCard";
 import { fetchCategories, fetchQuizQuestions } from "./components/TriviaAPI";
 import Main from "./components/ui/Main";
+
+import { Difficulty } from "./components/DifficultySelect";
 
 export type Category = {
   id: number;
@@ -20,18 +23,13 @@ export type Question = {
   isCorrect?: boolean;
 };
 
-export enum Difficulty {
-  EASY = "easy",
-  MEDIUM = "medium",
-  HARD = "hard",
-}
-
 const TOTAL_QUESTIONS = 10;
 
 export type AppState = {
   categories: Category[];
   questions: Question[];
   selectedCategory: null | Category;
+  selectedDifficulty: null | Difficulty;
   number: number;
   quizIsComplete: boolean;
 };
@@ -39,6 +37,7 @@ export type AppState = {
 const initialState: AppState = {
   categories: [],
   selectedCategory: null,
+  selectedDifficulty: null,
   questions: [],
   number: 0,
   quizIsComplete: false,
@@ -47,7 +46,7 @@ const initialState: AppState = {
 const App: React.FC = () => {
   const [state, setState] = useState(initialState);
 
-  const oncategorySelect = (category: Category): void => {
+  const onCategorySelect = (category: Category): void => {
     setState((state) => {
       return {
         ...state,
@@ -56,8 +55,23 @@ const App: React.FC = () => {
     });
   };
 
-  const { categories, selectedCategory, questions, number, quizIsComplete } =
-    state;
+  const onDifficultySelect = (difficulty: Difficulty): void => {
+    setState((state) => {
+      return {
+        ...state,
+        selectedDifficulty: difficulty,
+      };
+    });
+  };
+
+  const {
+    categories,
+    selectedCategory,
+    selectedDifficulty,
+    questions,
+    number,
+    quizIsComplete,
+  } = state;
 
   const handleUserAnswer = (isCorrect: boolean) => {
     console.log(
@@ -88,12 +102,13 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (!selectedDifficulty) return;
     const loadQuestions = async () => {
       if (selectedCategory !== null) {
         const questions = await fetchQuizQuestions(
           TOTAL_QUESTIONS,
           selectedCategory.id,
-          Difficulty.EASY
+          selectedDifficulty
         );
         console.log(questions);
         setState((state: AppState) => {
@@ -107,7 +122,7 @@ const App: React.FC = () => {
       }
     };
     loadQuestions();
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedDifficulty]);
 
   return (
     <Container>
@@ -117,11 +132,13 @@ const App: React.FC = () => {
         {!selectedCategory && categories.length > 0 && (
           <CategorySelect
             categories={categories}
-            onCategorySelect={oncategorySelect}
+            onCategorySelect={onCategorySelect}
           />
         )}
         {/* !!! choose difficulty */}
-
+        {selectedCategory && !selectedDifficulty && (
+          <DifficultySelect onDifficultySelect={onDifficultySelect} />
+        )}
         {questions.length > 0 && !quizIsComplete && (
           <QuestionCard
             question={questions[number]}

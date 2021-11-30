@@ -1,6 +1,8 @@
 import { decode } from "html-entities";
 
-import { Difficulty, Category } from "../App";
+import { Category } from "../App";
+
+import { Difficulty } from "./DifficultySelect";
 
 export const fetchCategories = async (): Promise<Category[]> => {
   const res = await fetch("https://opentdb.com/api_category.php");
