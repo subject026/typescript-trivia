@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 
 import Container from "./components/ui/Container";
+import Main from "./components/ui/Main";
 import Heading from "./components/ui/Heading";
 import Spinner from "./components/ui/Spinner";
 import CategorySelect from "./components/CategorySelect";
 import DifficultySelect from "./components/DifficultySelect";
 import QuestionCard from "./components/QuestionCard";
+import Results from "./components/Results";
+
 import { fetchCategories, fetchQuizQuestions } from "./components/TriviaAPI";
-import Main from "./components/ui/Main";
 
 import { Difficulty } from "./components/DifficultySelect";
 
@@ -20,7 +22,7 @@ export type Question = {
   question: string;
   correctAnswer: string;
   answers: string[];
-  isCorrect?: boolean;
+  isCorrect: boolean;
 };
 
 const TOTAL_QUESTIONS = 10;
@@ -149,7 +151,7 @@ const App: React.FC = () => {
         )}
 
         {/* !!! render results */}
-        {quizIsComplete && <h2>Boom</h2>}
+        {quizIsComplete && <Results questions={questions} />}
       </Main>
     </Container>
   );
